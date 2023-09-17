@@ -1,4 +1,11 @@
+#librerias
+
 library(readxl)
-setwd("C:/Users/prestamo/Desktop/taller clase")
+
+#directorio
+setwd("C:/Users/Admin/Desktop/R/inferencia-estadistica-R/taller clase")
+#base de datos 
 Diabeticos <- read_excel("Diabeticos.xlsx")
+
+
 
