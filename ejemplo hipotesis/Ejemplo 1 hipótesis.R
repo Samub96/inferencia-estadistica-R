@@ -19,9 +19,9 @@ library(pastecs)
 
 
 #directorio de trabajo
-setwd('D:/ADRIANA/Desktop/R')
+setwd('C:/Users/Admin/Desktop/R/inferencia-estadistica-R/ejemplo hipotesis')
 
-#directorio en el que se está trabajando
+#directorio en el que se est? trabajando
 getwd()
 
 #Leer la base de datos
@@ -29,17 +29,17 @@ getwd()
 datos <- read_excel("datos.xlsx")
 View(datos)
 
-#calcular las estadísticas descriptivas
+#calcular las estad?sticas descriptivas
 desc <- summary(datos, datos$`PESO PERDIDO`)
 desc
 
 attach(datos)
 
-#Mínimo
+#M?nimo
 min <- min(`PESO PERDIDO`)
 min
 
-#Máximo
+#M?ximo
 max <- max(`PESO PERDIDO`)
 max
 
@@ -51,11 +51,11 @@ rango
 media <- mean(`PESO PERDIDO`)
 media
 
-#Desviación estándar
+#Desviaci?n est?ndar
 desv_estandar <- sd(`PESO PERDIDO`)
 desv_estandar
 
-#Coeficiente de variación
+#Coeficiente de variaci?n
 coef_var <- desv_estandar/media
 coef_var
 
@@ -100,15 +100,15 @@ attach(datos_sinatipicos)
 Genero <- factor(datos_sinatipicos$GENERO, labels= c ("femenino", "masculino"))
 barchart(Genero)
 
-# gráfico de cajas
+# gr?fico de cajas
 
 boxplot_edad = ggplot(datos_sinatipicos, aes(x='', y=EDAD)) +
   geom_boxplot(color='grey10', width=0.5) +
-  labs(x='', y='Edad', title='Gráfico de cajas para la edad') +
+  labs(x='', y='Edad', title='Gr?fico de cajas para la edad') +
   theme_minimal()
 ggplotly(boxplot_edad)
 
-# estadísticas descriptivas
+# estad?sticas descriptivas
 
 summary(datos_sinatipicos)
 
@@ -117,10 +117,10 @@ descriptivas
 
 options(scipen = 999999)
 
-# gráficos y tablas
+# gr?ficos y tablas
 
 tabla <- table(GENERO)
-pie(tabla, main="Género de los clientes")
+pie(tabla, main="G?nero de los clientes")
 tabla.1 <- freq(GENERO)
 tabla.1
 edad2 <- cut(EDAD, c(seq(from = 19, to = 65, by = 10),65), include.lowest=TRUE)
@@ -131,11 +131,11 @@ tabla.3
 tabla.4 <- crosstab(GENERO, edad2, prop.r = TRUE,plot=FALSE)
 tabla.4
 
-# exploraciÓn de datos
+# exploraci?n de datos
 
 eda(EDAD)
 
-# HipÓtesis
+# Hip?tesis
 
 t.test(EDAD, mu=40)
 
