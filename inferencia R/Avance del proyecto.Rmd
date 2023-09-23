@@ -13,20 +13,22 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## ***1. Descripción***
 
-###  ***Antecedentes***
+### ***Antecedentes***
 
-###  ***Definicion del problema***
+Se realizó un estudio donde muestra la informacion de los carros producidos desde 1996 hasta el 2020 de distintas marcas
+
+### ***Definicion del problema***
 
 ## ***2. Objetivo del proyecto***
 
 ## ***3. Recoleccion de Datos***
 
-####      Definicion de la poblacion de estudio:
+#### **Definicion de la poblacion de estudio**
 
-####      Definicion del metodo de muestreo
+#### **Definicion del metodo de muestreo**
 
-####      Definicion de las variables de estudio
+#### **Definicion de las variables de estudio**
 
-####      Analisis del resultado
+#### **Analisis del resultado**
 
 ## 4. concluciones
