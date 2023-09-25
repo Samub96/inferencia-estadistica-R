@@ -1,0 +1,32 @@
+---
+title: "Avance proyecto final"
+author: "Samuel Barona, Lina Andrade, Sarai Barios, Samuel Alvares, Andres Cabezas"
+date: "2023-09-23"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## AVANCE DEL PROYECTO
+
+## ***1. Descripción***
+
+###  ***Antecedentes***
+
+###  ***Definicion del problema***
+
+## ***2. Objetivo del proyecto***
+
+## ***3. Recoleccion de Datos***
+
+####      Definicion de la poblacion de estudio:
+
+####      Definicion del metodo de muestreo
+
+####      Definicion de las variables de estudio
+
+####      Analisis del resultado
+
+## 4. concluciones
