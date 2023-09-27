@@ -1,6 +1,6 @@
 ---
-title: "Avance proyecto final"
-author: "Samuel Barona, Lina Andrade, Sarai Barios, Samuel Alvares, Andres Cabezas"
+title: "**Avance proyecto final**"
+author: "Samuel Barona, Lina Andrade, Sarai Barrios, Samuel Alvarez, Andres Cabezas"
 date: "2023-09-23"
 output: html_document
 ---
@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## AVANCE DEL PROYECTO
+## **AVANCE DEL PROYECTO**
 
 ## ***1. Descripción***
 
@@ -17,18 +17,18 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Se realizó un estudio donde muestra la informacion de los carros producidos desde 1996 hasta el 2020 de distintas marcas
 
-### ***Definicion del problema***
+### ***Definición del problema***
 
 ## ***2. Objetivo del proyecto***
 
-## ***3. Recoleccion de Datos***
+## ***3. Recolección de Datos***
 
-#### **Definicion de la poblacion de estudio**
+#### **Definición de la población de estudio**
 
-#### **Definicion del metodo de muestreo**
+#### **Definición del método de muestreo**
 
-#### **Definicion de las variables de estudio**
+#### **Definición de las variables de estudio**
 
-#### **Analisis del resultado**
+#### **Análisis del resultado**
 
 ## 4. concluciones
