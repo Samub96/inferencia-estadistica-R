@@ -5,7 +5,7 @@ library(readxl)
 library(ggplot2)
 
 # Carga los datos desde el archivo Excel
-data <- read_excel("C:/Users/Samuel/Desktop/graficas proyecto inferencia/cars_dataset.xlsx")  # Reemplaza "ruta_del_archivo.xlsx" con la ruta de tu archivo
+data <- read_excel("C:/Users/Admin/Desktop/R/inferencia-estadistica-R/graficas proyecto inferencia/cars_dataset.xlsx")  # Reemplaza "ruta_del_archivo.xlsx" con la ruta de tu archivo
 data_filtered <- data[data$year >= 2015 & data$year <= 2020,]
 # Verifica que los datos se hayan cargado correctamente
 head(data_filtered)
