@@ -1,0 +1,834 @@
+---
+title: "Primer Avance"
+author: "Lina Andrade - Sarai Barrios - Samuel Barona - Andres Cabezas - Samuel Álvarez"
+date: "2023-10-01"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
+
+```
+
+```{r}
+library(readr)
+library(tidyverse)
+library(dplyr)
+library(xts)
+library(psych)
+library(gmodels)
+library(MASS)
+library(fitdistrplus)
+library(lmtest)
+library(fdth)
+library(ggplot2)
+library(plotly)
+library(PASWR2)
+library(lattice)
+library(descr)
+library(openxlsx)
+library(kableExtra)
+library(pastecs)
+
+
+#Asignar directorio de trabajo
+setwd('C:/Users/Admin/Desktop/R/inferencia-estadistica-R/inferencia R')
+
+#Comprobar directorio de trabajo
+getwd()
+
+
+datos <- read_csv("cars_dataset.csv", show_col_types = FALSE)
+#view(datos)
+attach(datos)
+
+data  <- datos %>%
+  filter(year >= 2015 & year <= 2020)
+
+
+attach(data)
+```
+
+**Descripción**
+
+**Antecedentes:** El brote de COVID-19 afectó significativamente a la
+industria automotriz. Con la interrupción de la cadena de suministro y
+la interrupción del transporte, las nuevas incorporaciones al inventario
+de automóviles usados no estaban llegando al mercado. Como resultado,
+había menos modelos disponibles para la compra, lo que resultaba en
+menos compras. Sin embargo, durante las últimas etapas de 2021, el
+mercado comenzó a volver a la situación anterior a la pandemia,
+aumentando las oportunidades para el mercado de automóviles usados con
+un gran impulso de los consumidores de ingresos bajos y medios. A medio
+plazo, el mercado de automóviles usados en todo el mundo está creciendo
+rápidamente.
+
+**Planteamiento del problema:**
+
+El aumento de las ofertas de servicios de valor agregado y la variedad
+de proveedores financieros que ofrecen crédito para automóviles usados
+contribuyen al crecimiento del mercado de automóviles usados en todo el
+mundo. Sin embargo, las tasas de interés son más altas, desacelerando el
+crecimiento de este mercado.
+
+Factores como un aumento en los niveles de ingresos, el aumento de la
+demanda de automóviles de lujo, períodos de propiedad de automóviles más
+cortos, el auge de la importación y exportación y una creciente
+preferencia por los propietarios de obtener automóviles más pequeños y
+compactos impulsan inciden en el crecimiento del mercado.
+
+Sin embargo, la falta de financiación o las costosas opciones de
+financiación en muchos países para los coches usados pueden ser un
+problema para el mercado. Si bien el financiamiento para autos nuevos es
+fácil de obtener, los autos usados atraen una tasa de interés más alta y
+no son sancionados tan fácilmente. Sin embargo, con el crecimiento
+gradual en el sector organizado, la situación del mercado está
+cambiando. Fabricantes, como Audi, BMW, Ford, Hyundai se han aventurado
+a explorar en este campo.
+
+Es por esto que, para este informe, se creyó pertinente analizar las
+características presentes en este tipo de vehículos y así, poder
+determinar cuáles de ellos resultan una mejor opción para los
+compradores, pues en un mercado que parece crecer y crecer de manera
+exponencial, resulta abrumador tomar una decisión entre tal variedad de
+opciones.
+
+**Objetivos**
+
+**Objetivo general:**
+
+Identificar según las diferentes características de los automóviles, que
+marcas pueden ser la mejor opción de compra, con el fin de proporcionar
+una visión completa del mercado de automóviles y ayudar a la toma de
+decisiones informadas en la compra y venta de vehículos usados.
+
+**Objetivos específicos:**
+
+-   Seleccionar los automóviles que presentan una relación óptima entre
+    su año de fabricación y el kilometraje recorrido, con el fin de
+    determinar el nivel de desgaste de la máquina.
+
+-   Reconocer las marcas de automóviles que ofrecen una mayor variedad
+    de motores en su portafolio, utilizando los datos disponibles en la
+    base de datos.
+
+-   Analizar si existe una correlación entre los precios de los
+    automóviles y la marca, con el fin de estimar si dichos precios
+    están influenciados por la marca.
+
+-   Evaluar si el tipo de transmisión de los automóviles influye
+    significativamente en la variabilidad de los precios presentados en
+    la base de datos.
+
+-   Conocer si la mayoria de vehiculos usados tiene como fuente de
+    combustible a la gasolina.
+
+**Recolección de datos y análisis de resultados**
+
+**Forma:** Los datos analizados se obtuvieron de la base de datos "CARS
+DATASET", que fue cargada en la plataforma web "Kaggle" en el año 2020.
+Esta base de datos, que sintetiza información sobre varios automóviles
+usados, es una versión resumida de una base de datos más extensa que
+consta de aproximadamente 10,000 registros y fue propuesta por Aishwarya
+Muthukumar. En ella, se incluye información relevante sobre el precio,
+la transmisión, el kilometraje, el tipo de combustible, el impuesto de
+circulación, las millas por galón (mpg) y el tamaño del motor de estos
+vehículos.
+
+**Objetivo de estudio**:
+
+**Población:** La población a estudiar corresponde a los carros usados
+del Reino Unido presentes en la base de datos . **Muestra:** Se usará
+como muestra los carros entre los años 2015 y 2020.
+
+**Método de muestreo:**
+
+Para este caso, se aplicará el método de muestreo aleatorio simple,
+porque permite que los elementos de la población tengan las mismas
+posibilidades de ser seleccionados. Teniendo en cuenta que se desea
+analizar las características de los carros usados para así tomar una
+decisión, este método de muestreo es adecuado, pues cada carro tiene
+igual oportunidad de ser seleccionado en la muestra, logrando una
+investigación objetiva y representativa, aumentando la confiabilidad en
+los resultados.
+
+**Variables de estudio:**
+
+**Variables cualitativas:**
+
+Transmisión - Escala nominal Marca - Escala nominal Tipo de
+combustible - Escala nominal
+
+**Variables cuantitativas:**
+
+**Discretas:**
+
+Kilometraje (millas) - Escala de razón
+
+**Continuas:**
+
+Precio - Escala de razón.
+
+Tamaño del motor - Escala de razón.
+
+**Análisis de resultados**
+
+**Variables cualitativas:**
+
+**Transmisión:** hace referencia a una variable cualitativa medida en
+escala nomina. A continuación, se presenta la tabla de frecuencias y la
+gráfica de barras:
+
+```{r}
+
+tablaTransmision = data %>% group_by(transmission) %>% 
+  summarize(frec_abs=n()) %>% 
+  mutate(frec_rel=frec_abs/sum(frec_abs)*100)
+
+tablaTransmision
+
+
+```
+
+```{r}
+ggplot(tablaTransmision, aes(x=transmission, y=frec_abs, label=paste0(frec_abs),color=transmission)) +
+  geom_bar(stat='identity', fill='lightblue') +
+  geom_text(vjust=1.5) + 
+  labs(x='Transmisión', y='Frecuencia absoluta', title='Transmisión') +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+```
+
+Como se puede observar, en cuanto a la transmisión, predominan los
+carros usados automáticos.
+
+**Marca:** La marca del automóvil es una variable cualitativa medida en
+escala nominal. A continuación, se presenta la tabla de frecuencias y la
+gráfica de barras asociada :
+
+```{r}
+
+tablaMarca = data %>% group_by(Make) %>% 
+  summarize(frec_abs=n()) %>% 
+  mutate(frec_rel=frec_abs/sum(frec_abs)*100)
+
+tablaMarca
+
+```
+
+```{r}
+colores_personalizados <- c("BMW" = "aquamarine", "Ford" = "turquoise", "Hyundai" = "cyan4", 
+                            "audi" = "lightblue", "skoda" = "lightblue2", "toyota" = "lightskyblue2",
+                            "vw" = "turquoise2")
+
+
+ggplot(tablaMarca, aes(x = Make, y = frec_abs, fill = Make)) +
+  geom_bar(stat = 'identity') +
+  geom_text(aes(label = frec_abs), vjust = 1.5) +
+  labs(x = 'Marca', y = 'Frecuencia absoluta', title = 'Marca') +
+  scale_fill_manual(values = colores_personalizados) +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
+```
+
+En cuanto a la marca, existe un poco más de diversidad en este ámbito,
+sin embargo, las marcas predominantes son: Ford y vw. Es decir que, en
+Reino Unido, la mayor cantidad de carros usados puestos en venta
+pertenecen a las marcas anteriormente mencionadas.
+
+**Tipo de combustible:** El tipo de combustible es una variable
+cualitativa medida en escala nominal. A continuación, se presenta la
+tabla de frecuencias y la gráfica de barras:
+
+```{r}
+
+tablaCombustible = data %>% group_by(fuelType) %>% 
+  summarize(frec_abs=n()) %>% 
+  mutate(frec_rel=frec_abs/sum(frec_abs)*100)
+
+tablaCombustible
+
+```
+
+```{r}
+colores_personalizados <- c("Diesel" = "indianred", "Electric" = "orange2", "Hybrid" = "red3", "Other" = "brown", "Petrol" = "lightsalmon2")
+
+
+ggplot(tablaCombustible, aes(x = fuelType, y = frec_abs, fill = fuelType)) +
+  geom_bar(stat = 'identity') +
+  geom_text(aes(label = frec_abs), vjust = 1.5) +
+  labs(x = 'Tipo de combustible', y = 'Frecuencia absoluta', title = 'Tipo de combustible') +
+  scale_fill_manual(values = colores_personalizados) +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
+```
+
+el combustible eléctrico es uno de los menos comunes, esto se da
+principalmente, porque los vehiculos expuestos no son modelos de años
+recientes y esta idea de "combustible eléctrico" es relativamente nueva,
+lo que provoca que no existan muchos de estos vehiculos en el mercado de
+automóviles de segunda.
+
+En cuanto al diesel y la gasolina, que son los más comunes, existen
+variaciones de precio, que obligan al propietario a escoger entre uno u
+otro según presupuesto y demás consideraciones, tales como el lugar por
+el cual se moviliza, es decir, la gasolina es una mejor opción en las
+cuidades, pues es menos dañino para las personas, sin embargo, más
+dañino para el medio ambiente. Caso contrario con el diesel, pues es
+menos contaminante para el ambiente, por lo que, si se recorren rutas
+largas, el diesel puede ser una mejor opción.
+
+\##**Variables cuantitativas:**
+
+**Precio:**
+
+En este caso, al tratarse de una base de datos del Reino Unido, su
+moneda es la libra esterlina, por lo cual es importante recordar que esa
+será la moneda trabajada en este caso, para el precio. A continución se
+presenta el análisis exploratorio de los datos:
+
+**Histograma**
+
+```{r}
+ggplot(data, aes(x = price)) +
+  geom_histogram(binwidth = 0.5, fill = "blue", color = "black") +
+  labs(title = "Histograma del precio", x = "Precio", y = "Frecuencia")
+```
+
+**Diagrama de densidad**
+
+```{r}
+ggplot(data, aes(x = price)) +
+  geom_density(fill = "skyblue", color = "blue") +
+  labs(title = "Diagrama de densidad del precio", x = "precio", y = "Densidad")
+
+```
+
+**Diagrama de cajas**:
+
+```{r}
+ggplot(data, aes(y = price)) +
+  geom_boxplot(fill = "skyblue", color = "blue") +
+  labs(title = "Diagrama de cajas del Precio", y = "Precio")
+```
+
+Como se observa en el gráfico, la variable "precio" presenta varios
+datos atipicos, esto dado que, los precios de los automóviles son
+variables y dependen de distintos factores, por lo cual, para este caso,
+es normal encontrar tantos datos atípicos, sin embargo, más adelante se
+realizará la corrección.
+
+**Q-Q plot:** Permite verificar si los datos se ajustan a una
+distribución teórica. Cuando los puntos del gráfico siguen de cerca la
+línea diagonal, se sugiere que los datos son consistentes con la
+distribución teórica. Las desviaciones notables de la línea diagonal
+pueden ser indicadores de que los datos no siguen la distribución.
+
+```{r}
+qqnorm(data$price, main = "Q-Q Plot para el precio")
+qqline(data$price, col = "red")
+
+```
+
+**Estadística descriptiva: precio**
+
+```{r}
+# max  y min
+
+  min <- min(price)
+  max <- max(price)  
+
+# Rango intercuartil
+  
+  rango <- max-min
+  
+#Media
+  
+  media <- mean(price)
+  print(paste("Media", media))
+  
+#Mediana
+  
+   mediana <- median(price)
+   print(paste("Mediana", mediana))
+  
+#Desviación estándar
+  
+  desv_estandar <- sd(price)
+  print(paste("desviación estándar" , desv_estandar))
+  
+#Coeficiente de variación
+  
+  coef_var <- (desv_estandar/media)*100
+  print(paste("Coeficiente de variación" , coef_var))
+  
+#Simetria
+  
+ coeficiente_simetria <- skew(data$price)
+  print(paste("Coeficiente de simetría" , coeficiente_simetria))
+  
+#Cuartil 1
+  
+  q1 <- unname(quantile(price, 0.25))
+  print(paste("cuartil 1" ,q1))
+  
+#Cuartil 3
+  q3 <- unname(quantile(price, 0.75))
+  print(paste("Cuartil 3" , q3))
+  
+#Rango intercuartil
+  ric <- q3 - q1
+  print(paste("Rango intercuartil" , ric))
+  
+#Cerco inferior 
+  cerco_inf <- q1 - 1.5*ric
+  print(paste("Cerco inferior",cerco_inf))
+  
+#Cerco superior
+  cerco_sup <- q3 + 1.5*ric
+  print(paste("Cerco superior" , cerco_sup))
+
+
+  
+  atipicos <- filter(data, price<cerco_inf | price>cerco_sup)
+  
+  
+  datos_sinatipicos <- filter(data,price>=cerco_inf & price<=cerco_sup)
+  
+  max <- max(datos_sinatipicos$`price`)
+  max
+  
+  summary(datos_sinatipicos$price)
+  
+  descriptivas <- stat.desc(datos_sinatipicos$price)
+  descriptivas
+  
+  options(scipen = 999999)
+```
+
+Según el coeficiente de simetria, los datos son asimetricos, por lo que,
+se usa la mediana para representar los datos. Además, con el coeficiente
+de variación nos indica que se trata de datos heterogeneos.
+
+```{r}
+
+
+```
+
+**Tamaño del motor:**
+
+El tamaño del motor de un automóvil se refiere al volumen total de los
+cilindros en el motor y se mide comúnmente en litros (L) o centímetros
+cúbicos (cc). A demás de que el tamaño del motor es uno aspectos que
+determinan el rendimiento y la eficiencia de un automóvil. A continución
+se presenta el análisis exploratorio de los datos:
+
+**Histograma :**
+
+```{r}
+ggplot(data, aes(x = engineSize)) +
+  geom_histogram(binwidth = 0.5, fill = "lightblue", color = "black") +
+  labs(title = "Histograma del tamaño del motor", x = "Tamaño del motor", y = "Frecuencia")
+```
+
+En este caso, la mayoria de motores oscilan en un tamaño entre 1 y 2
+litros o cc, siendomotores de tamaño moderado o mediano.
+
+Los motores con desplazamientos entre 1 y 2 litros son comunes en una
+amplia variedad de vehículos, desde automóviles compactos hasta
+automóviles medianos y algunos vehículos deportivos y utilitarios. Estos
+motores son adecuados para una conducción diaria y suelen ofrecer un
+equilibrio razonable entre potencia y eficiencia de combustible.
+
+**Diagrama de densidad**
+
+```{r}
+ggplot(data, aes(x = engineSize)) +
+  
+  geom_density(fill = "skyblue", color = "blue") +
+  labs(title = "Diagrama de densidad del tamaño del motor", x = "Tamaño del motor", y = "Densidad")
+
+```
+
+**Diagrama de cajas:**
+
+```{r}
+ggplot(data, aes(y = engineSize)) +
+  geom_boxplot(fill = "skyblue", color = "blue") +
+  labs(title = "Diagrama de cajas del tamaño del motor", y = "Tamaño del motor")
+```
+
+Como se habia observado en el histograma, el tamaño del motor se
+encontraba entre uno y dos, por lo que, en este caso, aunque se
+presentan datos atipicos, no se presentan tantos como con la variable
+del precio.
+
+**Q-Q plot:**
+
+```{r}
+
+qqnorm(data$engineSize, main = "Q-Q Plot para el tamaño del motor")
+qqline(data$engineSize, col = "red")
+
+```
+
+**Estadística descriptiva: Tamaño del motor**
+
+```{r}
+
+# max  y min
+
+  min <- min(engineSize)
+  max <- max(engineSize)  
+
+# Rango intercuartil
+  
+  rango <- max-min
+  
+#Media
+  
+  media <- mean(engineSize)
+  print(paste("Media", media))
+  
+# Mediana 
+  
+  mediana <- median(engineSize)
+   print(paste("Mediana", mediana))
+   
+#Desviación estándar
+  
+  desv_estandar <- sd(engineSize)
+  print(paste("desviación estándar" , desv_estandar))
+  
+#Coeficiente de variación
+  
+  coef_var <- (desv_estandar/media)*100
+  print(paste("Coeficiente de variación" , coef_var))
+  
+#Simetria
+  
+ coeficiente_simetria <- skew(data$engineSize)
+  print(paste("Coeficiente de simetría" , coeficiente_simetria))
+  
+#Cuartil 1
+  
+  q1 <- unname(quantile(engineSize, 0.25))
+  print(paste("cuartil 1" ,q1))
+  
+#Cuartil 3
+  q3 <- unname(quantile(engineSize, 0.75))
+  print(paste("Cuartil 3" , q3))
+  
+#Rango intercuartil
+  ric <- q3 - q1
+  print(paste("Rango intercuartil" , ric))
+  
+#Cerco inferior 
+  cerco_inf <- q1 - 1.5*ric
+  print(paste("Cerco inferior",cerco_inf))
+  
+#Cerco superior
+  cerco_sup <- q3 + 1.5*ric
+  print(paste("Cerco superior" , cerco_sup))
+  
+   #Evaluar cercos
+  atipicos <- filter(data, engineSize<cerco_inf | engineSize>cerco_sup)
+  
+  
+  datos_sinatipicos3 <- filter(data,engineSize>=cerco_inf & engineSize<=cerco_sup)
+  
+  max <- max(datos_sinatipicos3$`engineSize`)
+  max
+  
+  summary(datos_sinatipicos3$engineSize)
+  
+  descriptivas3 <- stat.desc(datos_sinatipicos3$engineSize)
+  descriptivas3
+  
+  options(scipen = 999999)
+
+```
+
+En este caso, los datos también son datos heterogeneos.
+
+**Kilometraje:**
+
+El kilometraje en un carro usado es un indicador que puede proporcionar
+información sobre el historial y la condición general del vehículo. Un
+bajo kilometraje es un buen indicador, pero no es el único factor que
+determina la calidad y el valor de un carro usado. A continución se
+presenta el análisis exploratorio de los datos:
+
+**Histograma:**
+
+```{r}
+mielage <- data.frame(data$mileage)
+ggplot(mielage, aes(x = mileage)) +
+  geom_histogram(binwidth = 0.5, fill = "lightblue", color = "black") +
+  labs(title = "Histograma del Kilometraje", x = "Kilometraje del carro", y = "Frecuencia")
+
+```
+
+**Diagrama de densidad:**
+
+```{r}
+
+ggplot(data, aes(x = mileage)) +
+  
+  geom_density(fill = "skyblue", color = "blue") +
+  labs(title = "Diagrama de densidad del kilometraje", x = "Kilometraje", y = "Densidad")
+
+```
+
+**Diagrama de cajas:**
+
+```{r}
+ggplot(data, aes(y = mileage)) +
+  geom_boxplot(fill = "skyblue", color = "blue") +
+  labs(title = "Diagrama de cajas del Kilometraje", y = "Kilometraje")
+```
+
+**Q-Q plot:**
+
+```{r}
+
+qqnorm(data$mileage, main = "Q-Q Plot para el Kilometraje")
+qqline(data$mileage, col = "red")
+
+```
+
+**Estadística descriptiva:**
+
+```{r}
+
+
+# max  y min
+
+  min <- min(mileage)
+  max <- max(mileage)  
+
+# Rango intercuartil
+  
+  rango <- max-min
+  
+#Media
+  
+  media <- mean(mileage)
+  print(paste("Media", media))
+  
+# Mediana 
+  
+  mediana <- median(mileage)
+   print(paste("Mediana", mediana))
+   
+#Desviación estándar
+  
+  desv_estandar <- sd(mileage)
+  print(paste("desviación estándar" , desv_estandar))
+  
+#Coeficiente de variación
+  
+  coef_var <- (desv_estandar/media)*100
+  print(paste("Coeficiente de variación" , coef_var))
+  
+#Simetria
+  
+ coeficiente_simetria <- skew(data$mileage)
+  print(paste("Coeficiente de simetría" , coeficiente_simetria))
+  
+#Cuartil 1
+  
+  q1 <- unname(quantile(mileage, 0.25))
+  print(paste("cuartil 1" ,q1))
+  
+#Cuartil 3
+  q3 <- unname(quantile(mileage, 0.75))
+  print(paste("Cuartil 3" , q3))
+  
+#Rango intercuartil
+  ric <- q3 - q1
+  print(paste("Rango intercuartil" , ric))
+  
+#Cerco inferior 
+  cerco_inf <- q1 - 1.5*ric
+  print(paste("Cerco inferior",cerco_inf))
+  
+#Cerco superior
+  cerco_sup <- q3 + 1.5*ric
+  print(paste("Cerco superior" , cerco_sup))
+  
+   #Evaluar cercos
+  atipicos <- filter(data, mileage<cerco_inf |mileage>cerco_sup)
+ 
+  
+  datos_sinatipicos2 <- filter(data,mileage>=cerco_inf & mileage<=cerco_sup)
+  
+  max <- max(datos_sinatipicos3$`mileage`)
+  max
+  
+  summary(datos_sinatipicos3$mileage)
+  
+  descriptivas2 <- stat.desc(datos_sinatipicos2$mileage)
+  descriptivas3-2
+  
+  options(scipen = 999999)
+
+
+```
+
+**Tablas cruzadas:**
+
+```{r}
+ggplot(data, aes(x = engineSize, y = price, color = factor(transmission))) +
+  geom_point() +
+  labs(title = "Precio vs. Tamaño del Motor por Tipo de Transmisión", 
+       x = "Tamaño del Motor", y = "Precio", color = "Tipo de Transmisión") +
+  theme_minimal()
+
+
+```
+
+```{r}
+#tipo de combustible con respecto al tamaño del motor
+ggplot(data, aes(x = engineSize, y = factor(fuelType), color = fuelType)) +
+  geom_point(size = 3) +
+  labs(title = "Relación entre Tamaño del Motor y Tipo de Combustible", 
+       x = "Tamaño del Motor", 
+       y = "Tipo de Combustible") +
+  theme_minimal()
+```
+
+```{r}
+#tipo de combustible por marca de auto
+ggplot(data, aes(x = factor(Make), fill = fuelType)) +
+  geom_bar(position = "stack") +
+  labs(title = "Tipos de Combustibles por Marca de Auto", x = "Marca", y = "Cantidad") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+
+#Gráfico de dispersión para la relación entre el tamaño del motor (engineSize) y el precio (price):
+ggplot(data, aes(x = engineSize, y = price)) +
+  geom_point(color = "purple") +
+  labs(title = "Diagrama de Dispersión de Tamaño del Motor vs Precio", x = "Tamaño del Motor", y = "Precio")
+#Boxplot para visualizar la distribución de precios (price) por tipo de combustible (fuelType):
+ggplot(data, aes(x = fuelType, y = price)) +
+  geom_boxplot(fill = "yellow") +
+  labs(title = "Distribución de Precios por Tipo de Combustible", x = "Tipo de Combustible", y = "Precio")
+
+```
+
+**Hipotesis:**
+
+```{r}
+
+n<-length(data$price)
+
+variedad_motores <- data %>%
+  group_by(data$Make) %>%
+  summarise(Variedad_Motores = n_distinct(data$engineSize))
+
+# Ordenar por la variedad de motores en orden descendente
+variedad_motores <- variedad_motores %>%
+  arrange(desc(Variedad_Motores))
+
+variedad_motores
+
+##INTERVALOS DE CONFIANZA
+#para la muestra
+
+mean(data$price)
+
+media<-mean(data$price)
+z<- qnorm(0.025) #Valor de Z para un alfa de 0.025 a cada lado
+
+length(data$price)
+
+sd(data$price)
+
+desviacion<-sd(data$price)
+
+errorst<-desviacion/sqrt(n)
+
+lim_inf<-media-(z*errorst)
+lim_sup<-media+(z*errorst)
+
+interval_m<-data.frame(n, media, desviacion, z, errorst, lim_inf, lim_sup)
+interval_m
+
+#Se puede concluir que el promedio del precio de la población de autos usados está
+#entre 17491 y 17349
+
+#para la proporción
+
+nFord <- sum(data$Make == "Ford")
+
+result <- prop.test(nFord, n, p=0.5, alternative= "two.sided", conf.level=0.95, correct=FALSE)
+
+print(result)
+#La proporción de Automoviles Ford está entre el 24,1% y 24,7%
+
+
+##HIPOTESIS PARA LA MUESTRA USANDO KILOMETRAJE
+summary(data$mileage)
+# Hipotesis para la muestra usando t-student
+t.test(data$mileage, mu=16000,  alternative = "greater")
+# Valor critico de t
+qt (p = 0.95, df = 380, lower.tail = TRUE)
+
+#Se rechaza Ho ya que el T calculado es mayor al punto critico obtenido, además de que el valor p
+#es menor a nuestra alfa. Lo que quiere decir que el Kilometraje de la población es mayor a 16000 millas
+
+##HIPOTESIS PARA LA PROPORCIÓN USANDO TIPO DE COMBUSTIBLE FUELTYPE
+# Contando los autos que usen como combustible Petrol
+x <- sum(data$fuelType == "Petrol")
+
+
+z_values <- seq(-3, 3, by = 0.01)
+densidad_z <- dnorm(z_values)
+
+valor_z <- ((x/n) - 0.5) / sqrt((0.5 * (1 - 0.5)) / n)
+valor_z_critico <- qnorm(0.95)
+
+# Crear el gráfico de densidad de la distribución normal
+
+ggplot(data = data.frame(z = z_values, densidad = densidad_z), aes(x = z, y = densidad)) +
+  geom_line() +
+  theme_minimal() +
+  labs(x = "Valor z", y = "Densidad") +
+  ggtitle("Distribución Normal Estándar") +
+  geom_area(data = subset(data.frame(z = z_values, densidad = densidad_z), z >= valor_z_critico), aes(x = z, y = densidad), fill = "red") +
+  geom_area(data = subset(data.frame(z = z_values, densidad = densidad_z), z < valor_z_critico ), aes(x = z, y = densidad), fill = "blue") +
+  annotate("text", x = valor_z_critico + 1, y = 0.2, label = paste("α =", round(valor_z_critico, 2)), color = "red", size = 4) +
+  annotate("text", x = valor_z + 1, y = 0.2, label = paste("Z =", round(valor_z, 2)), color = "green", size = 4) +
+  geom_vline(xintercept = valor_z_critico, color = "red", linetype = "dashed") +
+  geom_vline(xintercept = valor_z, color = "green", linetype = "dashed")
+
+valorp <- prop.test(x, n, p=0.5, alternative= "greater", conf.level=0.95, correct=FALSE)
+
+#VALOR P
+valorp$p.value
+valorp$p.value>0.05
+
+
+
+#Se rechaza Ho tal como se observa en la grafica, y además si usamos el valor p obtenemos que es menor
+#a nuestra alfa 0.5 por lo que se Rechaza Ho y se obtiene que la mayoria de autos usan gasolian como fuente de combustible
+
+```
+
+**Conclusiones:**
+
+Se pudo evidenciar que la marca con más autos usados en el reino unido
+entre 2015 y 2020 es Ford con una proporción entre el 24,1% y 24,7%
+
+Pudimos observar que la gasolina si es el tipo de combustible que usan
+la mayoría de los vehículos usados, sin importar su marca en el reino
+unido entre 2015 y 2020
