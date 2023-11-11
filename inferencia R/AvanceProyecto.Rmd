@@ -35,38 +35,40 @@ library(pastecs)
 
 
 #Asignar directorio de trabajo
-setwd('C:/Users/Admin/Desktop/R/inferencia-estadistica-R/inferencia R')
+setwd('C:/Users/Family/Desktop/inferencia-estadistica-R/inferencia R')
 
 #Comprobar directorio de trabajo
 getwd()
 
 
-datos <- read_csv("cars_dataset.csv", show_col_types = FALSE)
+datos <-  read_csv("datos_reducidos2.csv", show_col_types = FALSE)
 #view(datos)
 attach(datos)
 
 data  <- datos %>%
-  filter(year >= 2015 & year <= 2020)
+  filter(year >= 2018 & year <= 2020)
 
 
 attach(data)
 ```
 
-**Descripción**
+## **Descripción**
 
-**Antecedentes:** El brote de COVID-19 afectó significativamente a la
-industria automotriz. Con la interrupción de la cadena de suministro y
-la interrupción del transporte, las nuevas incorporaciones al inventario
-de automóviles usados no estaban llegando al mercado. Como resultado,
-había menos modelos disponibles para la compra, lo que resultaba en
-menos compras. Sin embargo, durante las últimas etapas de 2021, el
-mercado comenzó a volver a la situación anterior a la pandemia,
-aumentando las oportunidades para el mercado de automóviles usados con
-un gran impulso de los consumidores de ingresos bajos y medios. A medio
-plazo, el mercado de automóviles usados en todo el mundo está creciendo
+### **Antecedentes:**
+
+El brote de COVID-19 afectó significativamente a la industria
+automotriz. Con la interrupción de la cadena de suministro y la
+interrupción del transporte, las nuevas incorporaciones al inventario de
+automóviles usados no estaban llegando al mercado. Como resultado, había
+menos modelos disponibles para la compra, lo que resultaba en menos
+compras. Sin embargo, durante las últimas etapas de 2021, el mercado
+comenzó a volver a la situación anterior a la pandemia, aumentando las
+oportunidades para el mercado de automóviles usados con un gran impulso
+de los consumidores de ingresos bajos y medios. A medio plazo, el
+mercado de automóviles usados en todo el mundo está creciendo
 rápidamente.
 
-**Planteamiento del problema:**
+### **Planteamiento del problema:**
 
 El aumento de las ofertas de servicios de valor agregado y la variedad
 de proveedores financieros que ofrecen crédito para automóviles usados
@@ -96,16 +98,16 @@ compradores, pues en un mercado que parece crecer y crecer de manera
 exponencial, resulta abrumador tomar una decisión entre tal variedad de
 opciones.
 
-**Objetivos**
+### **Objetivos**
 
-**Objetivo general:**
+#### **Objetivo general:**
 
 Identificar según las diferentes características de los automóviles, que
 marcas pueden ser la mejor opción de compra, con el fin de proporcionar
 una visión completa del mercado de automóviles y ayudar a la toma de
 decisiones informadas en la compra y venta de vehículos usados.
 
-**Objetivos específicos:**
+#### **Objetivos específicos:**
 
 -   Seleccionar los automóviles que presentan una relación óptima entre
     su año de fabricación y el kilometraje recorrido, con el fin de
@@ -126,25 +128,32 @@ decisiones informadas en la compra y venta de vehículos usados.
 -   Conocer si la mayoria de vehiculos usados tiene como fuente de
     combustible a la gasolina.
 
-**Recolección de datos y análisis de resultados**
+### **Recolección de datos y análisis de resultados**
 
-**Forma:** Los datos analizados se obtuvieron de la base de datos "CARS
-DATASET", que fue cargada en la plataforma web "Kaggle" en el año 2020.
-Esta base de datos, que sintetiza información sobre varios automóviles
-usados, es una versión resumida de una base de datos más extensa que
-consta de aproximadamente 10,000 registros y fue propuesta por Aishwarya
+#### **Forma:**
+
+Los datos analizados se obtuvieron de la base de datos "CARS DATASET",
+que fue cargada en la plataforma web "Kaggle" en el año 2020. Esta base
+de datos, que sintetiza información sobre varios automóviles usados, es
+una versión resumida de una base de datos más extensa que consta de
+aproximadamente 10,000 registros y fue propuesta por Aishwarya
 Muthukumar. En ella, se incluye información relevante sobre el precio,
 la transmisión, el kilometraje, el tipo de combustible, el impuesto de
 circulación, las millas por galón (mpg) y el tamaño del motor de estos
 vehículos.
 
-**Objetivo de estudio**:
+#### **Objetivo de estudio**:
 
-**Población:** La población a estudiar corresponde a los carros usados
-del Reino Unido presentes en la base de datos . **Muestra:** Se usará
-como muestra los carros entre los años 2015 y 2020.
+#### **Población:**
 
-**Método de muestreo:**
+La población a estudiar corresponde a los carros usados del Reino Unido
+presentes en la base de datos .
+
+#### **Muestra:**
+
+Se usará como muestra los carros entre los años 2015 y 2020.
+
+#### **Método de muestreo:**
 
 Para este caso, se aplicará el método de muestreo aleatorio simple,
 porque permite que los elementos de la población tengan las mismas
@@ -155,28 +164,31 @@ igual oportunidad de ser seleccionado en la muestra, logrando una
 investigación objetiva y representativa, aumentando la confiabilidad en
 los resultados.
 
-**Variables de estudio:**
+### **Variables de estudio:**
 
-**Variables cualitativas:**
+#### **Variables cualitativas:**
 
-Transmisión - Escala nominal Marca - Escala nominal Tipo de
-combustible - Escala nominal
+Transmisión - Escala nominal
 
-**Variables cuantitativas:**
+Marca - Escala nominal
 
-**Discretas:**
+Tipo de combustible - Escala nominal
+
+#### **Variables cuantitativas:**
+
+#### **Discretas:**
 
 Kilometraje (millas) - Escala de razón
 
-**Continuas:**
+#### **Continuas:**
 
 Precio - Escala de razón.
 
 Tamaño del motor - Escala de razón.
 
-**Análisis de resultados**
+### **Análisis de resultados**
 
-**Variables cualitativas:**
+#### **Variables cualitativas:**
 
 **Transmisión:** hace referencia a una variable cualitativa medida en
 escala nomina. A continuación, se presenta la tabla de frecuencias y la
