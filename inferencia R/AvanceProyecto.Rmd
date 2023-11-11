@@ -32,10 +32,11 @@ library(descr)
 library(openxlsx)
 library(kableExtra)
 library(pastecs)
+library(multcomp)
 
 
 #Asignar directorio de trabajo
-setwd('C:/Users/Family/Desktop/inferencia-estadistica-R/inferencia R')
+setwd('C:/Universidad/Universidad/Inferencia Estadistica/inferencia-estadistica-R/inferencia R')
 
 #Comprobar directorio de trabajo
 getwd()
@@ -833,6 +834,69 @@ valorp$p.value>0.05
 
 #Se rechaza Ho tal como se observa en la grafica, y además si usamos el valor p obtenemos que es menor
 #a nuestra alfa 0.5 por lo que se Rechaza Ho y se obtiene que la mayoria de autos usan gasolian como fuente de combustible
+
+```
+**ANOVA**
+```{R}
+
+
+
+## Hipótesis
+
+#- \(H_0\): \(\mu_{\text{audi}} = \mu_{\text{BMW}} = \mu_{\text{Ford}} = \mu_{\text{Hyundai}} = \mu_{\text{skoda}} = \mu_{\text{toyota}} = \mu_{\text{vw}}\), es decir, no hay diferencias significativas en los precios promedio entre las marcas de autos.
+
+#- \(H_1\): Al menos dos de las medias poblacionales son diferentes, es decir, al menos una de las marcas tiene un precio promedio significativamente diferente.
+
+
+# Convertir 'Make' a factor
+data$Make <- as.factor(data$Make)
+
+# Boxplot
+boxplot(price ~ Make, data = data, main = "Boxplot de Precio por Marca", xlab = "Marca", ylab = "Precio")
+
+# Promedio por marca
+mean_by_make <- tapply(data$price, data$Make, mean)
+print("Promedio de precio por marca:")
+print(mean_by_make)
+
+# ANOVA
+modelo_anova <- aov(lm(price ~ Make, data = data))
+summary(modelo_anova)
+
+# Test de Tukey
+tukey_results <- TukeyHSD(modelo_anova)
+# Imprimir los resultados del Test de Tukey
+cat("Resultados del Test de Tukey:\n")
+print(tukey_results)
+```
+
+**Regresión**
+```{r}
+#Ho: Bo = 0
+#Hi: Bo != 0
+
+options(scipen = 999)
+
+# Crear un modelo de regresión lineal
+modelo <- lm(price ~ mileage, data = data)
+
+# Imprimir un resumen del modelo
+summary(modelo)
+
+intercepto <- coef(modelo)[1]
+pendiente <- coef(modelo)[2]
+
+# Determinar el signo del coeficiente de la pendiente
+signo <- ifelse(pendiente >= 0, "+", "-")
+
+# Imprimir la ecuación de la recta
+pendiente <- paste("Ecuación de la recta: Precio =", round(intercepto, 2), signo, abs(round(pendiente, 2)), "* Kilometraje")
+
+# Graficar los datos
+plot(data$mileage, data$price, main = pendiente, xlab = "Kilometraje", ylab = "Precio", pch = 1, col = "blue")
+
+# Agregar la línea de regresión al gráfico
+abline(modelo, col = "red")
 
 ```
 
