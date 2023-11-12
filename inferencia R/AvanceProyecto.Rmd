@@ -42,12 +42,12 @@ setwd('C:/Universidad/Universidad/Inferencia Estadistica/inferencia-estadistica-
 getwd()
 
 
-datos <-  read_csv("datos_reducidos2.csv", show_col_types = FALSE)
+datos <-  read_csv("cars_dataset.csv", show_col_types = FALSE)
 #view(datos)
 attach(datos)
 
 data  <- datos %>%
-  filter(year >= 2018 & year <= 2020)
+  filter(year >= 2018 & year <= 2020 & mileage>5000)
 
 
 attach(data)
@@ -782,15 +782,15 @@ t.test(data$mileage, mu=16000,  alternative = "greater")
 # Valor critico de t
 qt (p = 0.95, df = 380, lower.tail = TRUE)
 
-print("Se rechaza H_0 debido a que el valor p < α. Lo que quiere decir que el Kilometraje de la población es mayor a 16000 millas")
+print("No se rechaza H_0 debido a que el valor p > α. No hay suficiente evidencia estadistica para decir que el Kilometraje de la población es mayor a 16000 millas")
 ```
 ***HIPOTESIS PARA LA PROPORCIÓN USANDO TIPO DE COMBUSTIBLE FUELTYPE***
 ```{r}
-print("H_0: \pi =< 0.5")
-print("H_1: \pi > 0.5")
+print("H_0: pi =< 0.5")
+print("H_1: pi > 0.5")
 # Contando los autos que usen como combustible Petrol
 x <- sum(data$fuelType == "Petrol")
-
+n <- sum(data$engineSize>=0)
 
 z_values <- seq(-3, 3, by = 0.01)
 densidad_z <- dnorm(z_values)
@@ -845,14 +845,18 @@ print(mean_by_make)
 
 # ANOVA
 modelo_anova <- aov(lm(price ~ Make, data = data))
-summary(modelo_anova)
+print(summary(modelo_anova))
 
+print("Se rechaza H_0 debido a que el valor p < α. Lo que significa que hay al menos dos medias diferentes.")
+
+
+print("Por eso se hace un POST ANOVA con el test de Tukey para conocer las medias iguales y diferentes")
 # Test de Tukey
 tukey_results <- TukeyHSD(modelo_anova)
 # Imprimir los resultados del Test de Tukey
-cat("Resultados del Test de Tukey:\n")
+print("Resultados del Test de Tukey:\n")
 print(tukey_results)
-print("Las medias iguales son: BMW-audi, Hyundai-Ford, toyota-Ford, skoda-Hyundai, toyota-Hyundai, toyota-skoda, ")
+print("Las medias iguales son: BMW-audi, skoda-Ford, Hyundai-Ford, toyota-Ford, skoda-Hyundai, toyota-Hyundai, toyota-skoda")
 ```
 
 
@@ -873,7 +877,7 @@ correlation_test <- cor.test(data$mileage, data$price)
 # Imprimir los resultados de la prueba
 print(correlation_test)
 
-print("Se rechaza H_0, lo que significa que hay una correlación entre kilometraje y el precio de los automoviles usados, esta correlación corresponde a una correlación debil e inversa ya que r=-0.30")
+print("Se rechaza H_0, lo que significa que hay una correlación entre kilometraje y el precio de los automoviles usados, esta correlación corresponde a una correlación debil e inversa ya que r=-0.28")
 
 ```
 ***Supuesto de Linealidad***
@@ -946,6 +950,46 @@ print(breusch_pagan_test)
 print("Se rechaza H0, debido a que el valor p < α. Por ello, los residuos presentan heterocedasticidad, es decir, no presentan varianzas constantes")
 
 ```
+**Intervalo De Confianza**
+```{r}
+# Realiza las predicciones con intervalos de confianza
+predicciones_ci <- predict(modelo, newdata = data, interval = "confidence", level = 0.95)
+
+# Extrae los límites inferior y superior de los intervalos de confianza
+limite_inferior_ci <- predicciones_ci[, "lwr"]
+limite_superior_ci <- predicciones_ci[, "upr"]
+
+# Visualiza los resultados
+resultados_ci <- data.frame(Prediccion = predicciones_ci[, 1], LimiteInferior = limite_inferior_ci, LimiteSuperior = limite_superior_ci)
+print(resultados_ci)
+
+# Intervalo de confianza para la regresión (95% por defecto)
+intervalo_confianza_regresion <- confint(modelo, level = 0.95)
+
+# Imprimir los resultados
+print("Intervalo de Confianza para la Regresión:")
+print(intervalo_confianza_regresion)
+
+print("Intercepto:Con un 95% de confianza, el valor real del intercepto (el precio cuando el kilometraje es cero) se espera que esté entre $23,661.37 y $25,673.50.
+
+Kilometraje:Con un 95% de confianza, se espera que por cada unidad adicional de kilometraje, el precio disminuya entre $0.3374 y $0.4819.")
+
+```
+**Intervalo De Predicción**
+```{r}
+
+predicciones <- predict(modelo, newdata = data, interval = "prediction", level = 0.95)
+
+# Extrae los límites inferior y superior de los intervalos de predicción
+limite_inferior <- predicciones[, "lwr"]
+limite_superior <- predicciones[, "upr"]
+
+# Visualiza los resultados
+resultados <- data.frame(Prediccion = predicciones[, 1], LimiteInferior = limite_inferior, LimiteSuperior = limite_superior)
+print(resultados)
+
+```
+
 **Conclusiones:**
 
 Se pudo evidenciar que la marca con más autos usados en el reino unido
