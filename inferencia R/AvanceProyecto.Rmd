@@ -703,8 +703,6 @@ ggplot(data, aes(x = engineSize, y = price, color = factor(transmission))) +
   labs(title = "Precio vs. Tamaño del Motor por Tipo de Transmisión", 
        x = "Tamaño del Motor", y = "Precio", color = "Tipo de Transmisión") +
   theme_minimal()
-
-
 ```
 
 ```{r}
@@ -738,29 +736,13 @@ ggplot(data, aes(x = fuelType, y = price)) +
 
 ```
 
-**Hipotesis:**
-
+**INTERVALOS DE CONFIANZA**
+***Para la Media del Precio de los autos***
 ```{r}
-
-n<-length(data$price)
-
-variedad_motores <- data %>%
-  group_by(data$Make) %>%
-  summarise(Variedad_Motores = n_distinct(data$engineSize))
-
-# Ordenar por la variedad de motores en orden descendente
-variedad_motores <- variedad_motores %>%
-  arrange(desc(Variedad_Motores))
-
-variedad_motores
-
-##INTERVALOS DE CONFIANZA
-#para la muestra
-
 mean(data$price)
 
 media<-mean(data$price)
-z<- qnorm(0.025) #Valor de Z para un alfa de 0.025 a cada lado
+t_critico <- qt(0.025, df = length(data)-1)
 
 length(data$price)
 
@@ -770,36 +752,42 @@ desviacion<-sd(data$price)
 
 errorst<-desviacion/sqrt(n)
 
-lim_inf<-media-(z*errorst)
-lim_sup<-media+(z*errorst)
+lim_inf<- media+t_critico*errorst
+lim_sup<- media-t_critico*errorst
 
-interval_m<-data.frame(n, media, desviacion, z, errorst, lim_inf, lim_sup)
+interval_m<-data.frame(n, media, desviacion, t_critico, errorst, lim_inf, lim_sup)
 interval_m
 
-#Se puede concluir que el promedio del precio de la población de autos usados está
-#entre 17491 y 17349
-
-#para la proporción
-
+print("Se puede concluir que el promedio del precio de la población de autos usados está entre 21038.56 y 22005.57")
+```
+***Para la Proporción de autos de la marca Ford***
+```{r}
 nFord <- sum(data$Make == "Ford")
 
 result <- prop.test(nFord, n, p=0.5, alternative= "two.sided", conf.level=0.95, correct=FALSE)
 
 print(result)
-#La proporción de Automoviles Ford está entre el 24,1% y 24,7%
 
+print("El intervalo de proporción de autos Ford está entre 0.2286801 y 0.2637388")
 
-##HIPOTESIS PARA LA MUESTRA USANDO KILOMETRAJE
+```
+**HIPOTESIS**
+***HIPOTESIS PARA LA MUESTRA USANDO KILOMETRAJE***
+```{r}
+print("H_0: μ =< 16000")
+print("H_1: μ > 1600")
 summary(data$mileage)
 # Hipotesis para la muestra usando t-student
 t.test(data$mileage, mu=16000,  alternative = "greater")
 # Valor critico de t
 qt (p = 0.95, df = 380, lower.tail = TRUE)
 
-#Se rechaza Ho ya que el T calculado es mayor al punto critico obtenido, además de que el valor p
-#es menor a nuestra alfa. Lo que quiere decir que el Kilometraje de la población es mayor a 16000 millas
-
-##HIPOTESIS PARA LA PROPORCIÓN USANDO TIPO DE COMBUSTIBLE FUELTYPE
+print("Se rechaza H_0 debido a que el valor p < α. Lo que quiere decir que el Kilometraje de la población es mayor a 16000 millas")
+```
+***HIPOTESIS PARA LA PROPORCIÓN USANDO TIPO DE COMBUSTIBLE FUELTYPE***
+```{r}
+print("H_0: \pi =< 0.5")
+print("H_1: \pi > 0.5")
 # Contando los autos que usen como combustible Petrol
 x <- sum(data$fuelType == "Petrol")
 
@@ -832,20 +820,16 @@ valorp$p.value>0.05
 
 
 
-#Se rechaza Ho tal como se observa en la grafica, y además si usamos el valor p obtenemos que es menor
-#a nuestra alfa 0.5 por lo que se Rechaza Ho y se obtiene que la mayoria de autos usan gasolian como fuente de combustible
+print("Se rechaza H_0 debido a que el valor p < α. Por lo que se obtiene que la mayoria de autos usan gasolina como fuente de combustible")
 
 ```
 **ANOVA**
 ```{R}
+print("Prueba de ANOVA entre las medias poblacionales de los precios de los autos agrupados por marca")
 
+"H_0: μ_1 = μ_2 = μ_3 = μ_4 = μ_5 = μ_6 = μ_7"
 
-
-## Hipótesis
-
-#- \(H_0\): \(\mu_{\text{audi}} = \mu_{\text{BMW}} = \mu_{\text{Ford}} = \mu_{\text{Hyundai}} = \mu_{\text{skoda}} = \mu_{\text{toyota}} = \mu_{\text{vw}}\), es decir, no hay diferencias significativas en los precios promedio entre las marcas de autos.
-
-#- \(H_1\): Al menos dos de las medias poblacionales son diferentes, es decir, al menos una de las marcas tiene un precio promedio significativamente diferente.
+"H_1: Al menos dos de las medias poblacionales de los precios de los autos agrupados por marca son diferentes"
 
 
 # Convertir 'Make' a factor
@@ -868,12 +852,35 @@ tukey_results <- TukeyHSD(modelo_anova)
 # Imprimir los resultados del Test de Tukey
 cat("Resultados del Test de Tukey:\n")
 print(tukey_results)
+print("Las medias iguales son: BMW-audi, Hyundai-Ford, toyota-Ford, skoda-Hyundai, toyota-Hyundai, toyota-skoda, ")
 ```
 
+
 **Regresión**
+***Prueba del Coeficiente de correlación***
 ```{r}
-#Ho: Bo = 0
-#Hi: Bo != 0
+print("Prueba de coeficiente correlación entre el Kilometraje y el precio de los autos")
+
+print("H_0: \rho = 0")
+print("H_1: \rho \neq 0")
+
+
+plot(data$mileage,data$price, col = "blue" ,xlab = "Kilometraje", ylab = "Precio")
+
+# Realizar la prueba de correlación
+correlation_test <- cor.test(data$mileage, data$price)
+
+# Imprimir los resultados de la prueba
+print(correlation_test)
+
+print("Se rechaza H_0, lo que significa que hay una correlación entre kilometraje y el precio de los automoviles usados, esta correlación corresponde a una correlación debil e inversa ya que r=-0.30")
+
+```
+***Supuesto de Linealidad***
+```{r}
+# Hipótesis nula y alternativa
+print("H_0: \beta_1 = 0")
+print("H_1: \beta_1 \neq 0")
 
 options(scipen = 999)
 
@@ -890,7 +897,15 @@ pendiente <- coef(modelo)[2]
 signo <- ifelse(pendiente >= 0, "+", "-")
 
 # Imprimir la ecuación de la recta
-pendiente <- paste("Ecuación de la recta: Precio =", round(intercepto, 2), signo, abs(round(pendiente, 2)), "* Kilometraje")
+pendiente <- paste("ŷ=", round(intercepto, 2), signo, abs(round(pendiente, 2)),"x")
+
+print("Se rechaza H_0 debido a que el valor p < α, por lo que β₀ es significativo en el modelo")
+
+print("Ecuación lineal del modelo: ")
+
+cat("ŷ = β₀ + β₁ * x\n")
+
+print(pendiente)
 
 # Graficar los datos
 plot(data$mileage, data$price, main = pendiente, xlab = "Kilometraje", ylab = "Precio", pch = 1, col = "blue")
@@ -899,7 +914,38 @@ plot(data$mileage, data$price, main = pendiente, xlab = "Kilometraje", ylab = "P
 abline(modelo, col = "red")
 
 ```
+**Supuestos de Residuos**
+***Supuesto de Normalidad***
+```{r}
+print("H_0: Los residuos presentan una distribución normal")
+print("H_1: Los residuos no presentan una distribución normal")
 
+residuos <- resid(modelo)
+
+# Prueba de normalidad de Shapiro-Wilk
+shapiro_test <- shapiro.test(residuos)
+
+# Imprimir el resultado de la prueba
+print(shapiro_test)
+
+print("Se rechaza H_0, debido a que el valor p < α. Por ello, los residuos no se distribuyen de manera normal")
+
+```
+***Supuesto de Homogeneidad***
+```{r}
+print("H_0: La varianza de los errores es constante (homocedasticidad)")
+print("H_1: La varianza de los errores no es constante (heterocedasticidad)")
+
+residuos <- resid(modelo)
+
+# Prueba de Breusch-Pagan
+breusch_pagan_test <- lmtest::bptest(modelo)
+
+# Imprimir el resultado de la prueba
+print(breusch_pagan_test)
+print("Se rechaza H0, debido a que el valor p < α. Por ello, los residuos presentan heterocedasticidad, es decir, no presentan varianzas constantes")
+
+```
 **Conclusiones:**
 
 Se pudo evidenciar que la marca con más autos usados en el reino unido
